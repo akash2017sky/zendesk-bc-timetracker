@@ -1,0 +1,239 @@
+/**
+ * Business Central Time Tracker - Styles
+ * Clean, professional styling for Zendesk sidebar widget
+ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #2f3941;
+  background: #ffffff;
+  padding: 16px;
+}
+
+/* App Container */
+.app-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Header */
+.app-header {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e9ebed;
+}
+
+.app-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2f3941;
+  margin-bottom: 4px;
+}
+
+.app-header .subtitle {
+  font-size: 13px;
+  color: #68737d;
+}
+
+/* Loading State */
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loading-state p,
+.error-state p {
+  margin-top: 12px;
+  color: #68737d;
+}
+
+.error-state h3 {
+  color: #cc3340;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+/* Alerts */
+.alert {
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.alert-success {
+  background-color: #edf8f4;
+  color: #0b735f;
+  border: 1px solid #0b735f;
+}
+
+.alert-error {
+  background-color: #fff0f1;
+  color: #cc3340;
+  border: 1px solid #cc3340;
+}
+
+/* Form */
+.time-entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2f3941;
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #2f3941;
+  background-color: #ffffff;
+  border: 1px solid #d8dcde;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #1f73b7;
+  box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.12);
+}
+
+.form-control:disabled {
+  background-color: #f8f9f9;
+  color: #87929d;
+  cursor: not-allowed;
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2368737D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.form-text {
+  font-size: 12px;
+  color: #68737d;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  width: 100%;
+}
+
+.btn-primary {
+  color: #ffffff;
+  background-color: #1f73b7;
+  border-color: #1f73b7;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #144a75;
+  border-color: #144a75;
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: #03363d;
+  border-color: #03363d;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+}
+
+.loading-state .spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e9ebed;
+  border-top-color: #1f73b7;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Footer */
+.app-footer {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #e9ebed;
+  text-align: center;
+}
+
+.app-footer small {
+  font-size: 12px;
+  color: #68737d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+  body {
+    padding: 12px;
+  }
+
+  .app-header h2 {
+    font-size: 16px;
+  }
+
+  .form-control {
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "app_id": 12345,
+  "parameters": {
+    "bc_tenant_id": "your-tenant-id-guid",
+    "bc_environment": "production",
+    "bc_company_id": "your-company-id-guid",
+    "bc_api_endpoint": "https://api.businesscentral.dynamics.com/v2.0",
+    "bc_username": "your-bc-username",
+    "bc_password": "your-bc-password"
+  }
+}
