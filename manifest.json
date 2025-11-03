@@ -15,41 +15,11 @@
   "frameworkVersion": "2.0",
   "parameters": [
     {
-      "name": "bc_tenant_id",
-      "type": "text",
-      "required": true,
-      "secure": false
-    },
-    {
-      "name": "bc_environment",
-      "type": "text",
-      "required": true,
-      "default": "production"
-    },
-    {
-      "name": "bc_company_id",
-      "type": "text",
-      "required": true,
-      "secure": false
-    },
-    {
-      "name": "bc_api_endpoint",
+      "name": "backend_url",
       "type": "text",
       "required": true,
       "secure": false,
-      "default": "https://api.businesscentral.dynamics.com/v2.0"
-    },
-    {
-      "name": "bc_username",
-      "type": "text",
-      "required": true,
-      "secure": false
-    },
-    {
-      "name": "bc_web_service_key",
-      "type": "password",
-      "required": true,
-      "secure": true
+      "default": "https://your-function-app.azurewebsites.net/api"
     }
   ]
 }

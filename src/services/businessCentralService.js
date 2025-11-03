@@ -1,14 +1,12 @@
 /**
  * Business Central API Service
- * Handles all interactions with Microsoft Dynamics 365 Business Central API
- * Uses Basic Authentication with Web Service Access Key
+ * Handles all interactions with the Azure Functions backend
+ * Backend handles OAuth authentication with Business Central
  */
 
 class BusinessCentralService {
   constructor() {
-    this.config = null;
-    this.baseUrl = null;
-    this.authHeader = null;
+    this.backendUrl = null;
   }
 
   /**
@@ -16,37 +14,23 @@ class BusinessCentralService {
    * @param {Object} settings - App settings from manifest.json parameters
    */
   initialize(settings) {
-    this.config = {
-      tenantId: settings.bc_tenant_id,
-      environment: settings.bc_environment,
-      companyId: settings.bc_company_id,
-      apiEndpoint: settings.bc_api_endpoint,
-      username: settings.bc_username,
-      webServiceKey: settings.bc_web_service_key
-    };
-
-    // Construct base URL for API calls
-    this.baseUrl = `${this.config.apiEndpoint}/${this.config.tenantId}/${this.config.environment}/api/v2.0/companies(${this.config.companyId})`;
-
-    // Create Basic Auth header
-    const credentials = btoa(`${this.config.username}:${this.config.webServiceKey}`);
-    this.authHeader = `Basic ${credentials}`;
+    this.backendUrl = settings.backend_url;
+    console.log('Business Central service initialized with backend:', this.backendUrl);
   }
 
   /**
-   * Make an authenticated request to Business Central API
-   * @param {string} endpoint - API endpoint path
+   * Make a request to the backend API
+   * @param {string} endpoint - API endpoint path (without /api prefix)
    * @param {Object} options - Fetch options
    * @returns {Promise<Object>} - API response data
    */
   async makeRequest(endpoint, options = {}) {
-    if (!this.config) {
+    if (!this.backendUrl) {
       throw new Error('Business Central service not initialized. Call initialize() first.');
     }
 
-    const url = `${this.baseUrl}${endpoint}`;
+    const url = `${this.backendUrl}${endpoint}`;
     const headers = {
-      'Authorization': this.authHeader,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       ...options.headers
@@ -59,13 +43,20 @@ class BusinessCentralService {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`BC API Error (${response.status}): ${errorText}`);
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(`Backend API Error (${response.status}): ${errorData.error || 'Unknown error'}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+
+      // Check if backend returned success: false
+      if (data.success === false) {
+        throw new Error(data.error || 'Backend request failed');
+      }
+
+      return data;
     } catch (error) {
-      console.error('Business Central API request failed:', error);
+      console.error('Backend API request failed:', error);
       throw error;
     }
   }
@@ -76,8 +67,8 @@ class BusinessCentralService {
    */
   async getCustomers() {
     try {
-      const data = await this.makeRequest('/customers');
-      return data.value || [];
+      const response = await this.makeRequest('/bc/customers');
+      return response.data || [];
     } catch (error) {
       console.error('Failed to fetch customers:', error);
       throw new Error('Failed to load customers from Business Central');
@@ -91,15 +82,15 @@ class BusinessCentralService {
    */
   async getJobs(customerId = null) {
     try {
-      let endpoint = '/jobs';
+      let endpoint = '/bc/jobs';
 
       // Filter by customer if provided
       if (customerId) {
-        endpoint += `?$filter=billToCustomerId eq ${customerId}`;
+        endpoint += `?customerId=${customerId}`;
       }
 
-      const data = await this.makeRequest(endpoint);
-      return data.value || [];
+      const response = await this.makeRequest(endpoint);
+      return response.data || [];
     } catch (error) {
       console.error('Failed to fetch jobs:', error);
       throw new Error('Failed to load projects from Business Central');
@@ -108,14 +99,15 @@ class BusinessCentralService {
 
   /**
    * Get job tasks for a specific job
+   * Note: Currently not implemented in backend - may need to add if BC supports job tasks
    * @param {string} jobId - Job ID (GUID)
    * @returns {Promise<Array>} - List of job tasks
    */
   async getJobTasks(jobId) {
     try {
-      const endpoint = `/jobs(${jobId})/jobTasks`;
-      const data = await this.makeRequest(endpoint);
-      return data.value || [];
+      // This endpoint may need to be added to backend if needed
+      console.warn('Job tasks endpoint not yet implemented in backend');
+      return [];
     } catch (error) {
       console.error('Failed to fetch job tasks:', error);
       throw new Error('Failed to load job tasks from Business Central');
@@ -129,11 +121,11 @@ class BusinessCentralService {
    */
   async getEmployeeByEmail(email) {
     try {
-      const endpoint = `/employees?$filter=email eq '${email}'`;
-      const data = await this.makeRequest(endpoint);
+      const endpoint = `/bc/employees?email=${encodeURIComponent(email)}`;
+      const response = await this.makeRequest(endpoint);
 
-      if (data.value && data.value.length > 0) {
-        return data.value[0];
+      if (response.data && response.data.length > 0) {
+        return response.data[0];
       }
 
       return null;
@@ -168,13 +160,13 @@ class BusinessCentralService {
         description: entryData.description
       };
 
-      const endpoint = '/timeRegistrationEntries';
-      const data = await this.makeRequest(endpoint, {
+      const endpoint = '/bc/timeEntries';
+      const response = await this.makeRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(payload)
       });
 
-      return data;
+      return response.data;
     } catch (error) {
       console.error('Failed to create time entry:', error);
       throw new Error('Failed to save time entry to Business Central');

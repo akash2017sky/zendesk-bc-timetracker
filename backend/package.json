@@ -1,0 +1,25 @@
+{
+  "name": "zendesk-bc-backend",
+  "version": "1.0.0",
+  "description": "Serverless backend proxy for Zendesk Business Central integration with OAuth 2.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "azure-functions",
+    "business-central",
+    "oauth",
+    "zendesk"
+  ],
+  "author": "KnowAll AI",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/functions": "^4.5.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "azure-functions-core-tools": "^4.0.5455"
+  }
+}

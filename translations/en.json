@@ -1,0 +1,8 @@
+{
+  "app": {
+    "name": "Business Central Time Tracker",
+    "short_description": "Track time and log entries to Business Central",
+    "long_description": "Track time on Zendesk tickets and automatically create time registration entries in Microsoft Dynamics 365 Business Central using secure authentication.",
+    "installation_instructions": "Configure your Business Central API credentials (username and Web Service Access Key) to connect this app to your BC instance."
+  }
+}
