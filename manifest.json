@@ -40,13 +40,13 @@
       "default": "https://api.businesscentral.dynamics.com/v2.0"
     },
     {
-      "name": "bc_client_id",
+      "name": "bc_username",
       "type": "text",
       "required": true,
       "secure": false
     },
     {
-      "name": "bc_client_secret",
+      "name": "bc_web_service_key",
       "type": "password",
       "required": true,
       "secure": true

@@ -1,15 +1,14 @@
 /**
  * Business Central API Service
  * Handles all interactions with Microsoft Dynamics 365 Business Central API
- * Uses OAuth 2.0 Client Credentials flow for authentication
+ * Uses Basic Authentication with Web Service Access Key
  */
 
 class BusinessCentralService {
   constructor() {
     this.config = null;
     this.baseUrl = null;
-    this.accessToken = null;
-    this.tokenExpiry = null;
+    this.authHeader = null;
   }
 
   /**
@@ -22,60 +21,16 @@ class BusinessCentralService {
       environment: settings.bc_environment,
       companyId: settings.bc_company_id,
       apiEndpoint: settings.bc_api_endpoint,
-      clientId: settings.bc_client_id,
-      clientSecret: settings.bc_client_secret
+      username: settings.bc_username,
+      webServiceKey: settings.bc_web_service_key
     };
 
     // Construct base URL for API calls
     this.baseUrl = `${this.config.apiEndpoint}/${this.config.tenantId}/${this.config.environment}/api/v2.0/companies(${this.config.companyId})`;
 
-    // OAuth token endpoint
-    this.tokenEndpoint = `https://login.microsoftonline.com/${this.config.tenantId}/oauth2/v2.0/token`;
-  }
-
-  /**
-   * Get OAuth access token using Client Credentials flow
-   * @returns {Promise<string>} - Access token
-   */
-  async getAccessToken() {
-    // Check if we have a valid cached token
-    if (this.accessToken && this.tokenExpiry && Date.now() < this.tokenExpiry) {
-      return this.accessToken;
-    }
-
-    try {
-      // Request new token from Azure AD
-      const params = new URLSearchParams({
-        client_id: this.config.clientId,
-        client_secret: this.config.clientSecret,
-        scope: 'https://api.businesscentral.dynamics.com/.default',
-        grant_type: 'client_credentials'
-      });
-
-      const response = await fetch(this.tokenEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: params.toString()
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`OAuth token request failed (${response.status}): ${errorText}`);
-      }
-
-      const tokenData = await response.json();
-
-      // Cache the token (expires_in is in seconds, convert to milliseconds)
-      this.accessToken = tokenData.access_token;
-      this.tokenExpiry = Date.now() + (tokenData.expires_in * 1000) - 60000; // Refresh 1 min before expiry
-
-      return this.accessToken;
-    } catch (error) {
-      console.error('Failed to get OAuth access token:', error);
-      throw new Error('Failed to authenticate with Business Central. Please check your Client ID and Secret.');
-    }
+    // Create Basic Auth header
+    const credentials = btoa(`${this.config.username}:${this.config.webServiceKey}`);
+    this.authHeader = `Basic ${credentials}`;
   }
 
   /**
@@ -89,12 +44,9 @@ class BusinessCentralService {
       throw new Error('Business Central service not initialized. Call initialize() first.');
     }
 
-    // Get OAuth access token
-    const accessToken = await this.getAccessToken();
-
     const url = `${this.baseUrl}${endpoint}`;
     const headers = {
-      'Authorization': `Bearer ${accessToken}`,
+      'Authorization': this.authHeader,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       ...options.headers
